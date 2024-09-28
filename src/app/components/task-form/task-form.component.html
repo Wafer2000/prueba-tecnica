@@ -1,0 +1,83 @@
+<div class="main-wrapper">
+  <div class="wrapper">
+    <form [formGroup]="getTaskForm()" class="form-parent">
+      <div class="checkbox-row">
+        <label class="description">¿Tarea completada?</label>
+        <input class="styled-checkbox" type="checkbox" formControlName="state">
+      </div>
+
+      <div class="form-field">
+        <input type="text" placeholder="Nombre de la Nota" formControlName="taskName" class="styled-input">
+        <input type="date" placeholder="Fecha límite" formControlName="date" class="styled-input">
+      </div>
+
+      <button type="button" class="add-task-button center" (click)="addPersons()">Agregar Personas</button>
+
+      <section class="form-grid" formArrayName="persons">
+        <div class="person-container" *ngFor="let person of getCtrl('persons', getTaskForm()).controls; index as personIndex">
+          <div class="form-block" [formGroupName]="personIndex">
+
+            <!-- Nombre de la Persona -->
+            <div class="form-field">
+              <input type="text" placeholder="Nombre de la Persona" formControlName="personName" class="styled-input">
+              <div class="error-message" *ngIf="person.get('personName').hasError('required') && person.get('personName').touched">
+                El nombre completo es requerido
+              </div>
+              <div class="error-message" *ngIf="person.get('personName').hasError('duplicatePersonName')">
+                El nombre de la persona ya existe
+              </div>
+            </div>
+
+            <!-- Edad -->
+            <div class="form-field">
+              <input type="number" placeholder="Edad" formControlName="age" class="styled-input">
+              <div class="error-message" *ngIf="person.get('age').hasError('required') && person.get('age').touched">
+                La edad es requerida
+              </div>
+              <div class="error-message" *ngIf="person.get('age').hasError('min') && person.get('age').touched">
+                La edad debe ser mayor a 18 años
+              </div>
+              <div class="error-message" *ngIf="person.get('age').hasError('invalidAge')">
+                La edad no puede ser negativa
+              </div>
+            </div>
+
+            <!-- Habilidades -->
+            <div class="form-field">
+              <section class="form-grid" formArrayName="skills">
+                <div class="form-field" *ngFor="let skillName of person.get('skills').controls; index as skillIndex">
+                  <div class="form-block" [formGroupName]="skillIndex">
+                    <div class="grid-row">
+                      <input type="text" placeholder="Habilidad" formControlName="skillName" class="styled-input">
+                      <span class="remove-skill" (click)="removeSkill(personIndex, skillIndex)" *ngIf="person.get('skills').length > 1">
+                        ✖
+                      </span>
+                    </div>
+                    <div class="error-message" *ngIf="skillName.get('skillName').hasError('required') && skillName.get('skillName').touched">
+                      La habilidad es requerida
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <!-- Botones Agregar/Eliminar -->
+            <div class="add-remove">
+              <button type="button" class="add-task-button" (click)="addSkills(personIndex)">Agregar Habilidad</button>
+              <button type="button" class="remove-task-button" (click)="removePerson(personIndex)" *ngIf="getCtrl('persons', getTaskForm()).length > 1">
+                Eliminar Persona
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Guardar Tarea -->
+      <button type="button" class="add-task-button center" (click)="saveTask()">Guardar Tarea</button>
+    </form>
+
+    <!-- Mensajes de éxito o error -->
+    <div *ngIf="isTaskSaved" class="success-message">Tarea guardada con éxito.</div>
+    <div *ngIf="hasErrors" class="error-message">Existen errores en el formulario. Por favor, revísalos antes de guardar.</div>
+  </div>
+</div>

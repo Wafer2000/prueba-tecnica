@@ -1,0 +1,51 @@
+<div class="task-list-container">
+  <div class="filter-section">
+    <label for="filter">Filtrar por estado:</label>
+    <select [(ngModel)]="selectedFilter" (ngModelChange)="filterTasks($event)">
+      <option value="all">Todas</option>
+      <option value="completed">Completadas</option>
+      <option value="pending">Pendientes</option>
+    </select>
+    <button class="add-task-button" (click)="goToTaskForm()">
+      Agregar Nueva Tarea
+    </button>
+  </div>
+
+
+  <div class="task-table-container">
+    <table class="task-table">
+      <thead>
+        <tr>
+          <th>Nombre de la Tarea</th>
+          <th>Fecha Límite</th>
+          <th>Estado</th>
+          <th>Personas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of filteredTasks">
+          <td data-label="Nombre de la Tarea">{{ task.taskName }}</td>
+          <td data-label="Fecha Límite">{{ task.date | date: 'dd/MM/yyyy' }}</td>
+          <td data-label="Estado">
+            <input type="checkbox" [checked]="task.state" (change)="toggleTaskState(task)" />
+          </td>
+          <td data-label="Personas">
+            <ul>
+              <li *ngFor="let person of task.persons" class="person-item">
+                <div class="person-name">{{ person.personName }}</div>
+                <div class="person-age">{{ person.age }} años</div>
+                <div class="skills-section">
+                  <strong>Habilidades:</strong>
+                  <ul class="skills-list">
+                    <li *ngFor="let skill of person.skills">{{ skill.skillName }}</li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
+  </div>
+</div>
